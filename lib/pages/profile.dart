@@ -1,6 +1,11 @@
 import 'dart:io';
 
+import 'package:canteen_app/service/auth.dart';
+import 'package:canteen_app/service/shared_pref.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:random_string/random_string.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -11,51 +16,49 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   String? profile, name, email;
-  //final ImagePicker _picker = ImagePicker();
+  final ImagePicker _picker = ImagePicker();
   File? selectedImage;
 
   Future getImage() async {
-    //var image = await _picker.pickImage(source: ImageSource.gallery);
+    var image = await _picker.pickImage(source: ImageSource.gallery);
 
-    // selectedImage = File(image!.path);
+    selectedImage = File(image!.path);
     setState(() {
-      //uploadItem();
+      uploadItem();
     });
   }
 
-  // uploadItem() async {
-  //   if (selectedImage != null) {
-  //     String addId = randomAlphaNumeric(10);
+  uploadItem() async {
+    if (selectedImage != null) {
+      String addId = randomAlphaNumeric(10);
 
-  //     Reference firebaseStorageRef =
-  //         FirebaseStorage.instance.ref().child("blogImages").child(addId);
-  //     final UploadTask task = firebaseStorageRef.putFile(selectedImage!);
+      Reference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child("blogImages").child(addId);
+      final UploadTask task = firebaseStorageRef.putFile(selectedImage!);
 
-  //     var downloadUrl = await (await task).ref.getDownloadURL();
-  //     await SharedPreferenceHelper().saveUserProfile(downloadUrl);
-  //     setState(() {
+      var downloadUrl = await (await task).ref.getDownloadURL();
+      await SharedPreferenceHelper().saveUserProfile(downloadUrl);
+      setState(() {});
+    }
+  }
 
-  //     });
-  //   }
-  // }
+  getthesharedpref() async {
+    profile = await SharedPreferenceHelper().getUserProfile();
+    name = await SharedPreferenceHelper().getUserName();
+    email = await SharedPreferenceHelper().getUserEmail();
+    setState(() {});
+  }
 
-  // getthesharedpref() async {
-  //   profile = await SharedPreferenceHelper().getUserProfile();
-  //   name = await SharedPreferenceHelper().getUserName();
-  //   email = await SharedPreferenceHelper().getUserEmail();
-  //   setState(() {});
-  // }
+  onthisload() async {
+    await getthesharedpref();
+    setState(() {});
+  }
 
-  // onthisload() async {
-  //   await getthesharedpref();
-  //   setState(() {});
-  // }
-
-  // @override
-  // void initState() {
-  //   onthisload();
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    onthisload();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +282,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      //  AuthMethods().deleteuser();
+                      AuthMethods().deleteuser();
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 20.0),
@@ -326,7 +329,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      //AuthMethods().SignOut();
+                      AuthMethods().SignOut(context);
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 20.0),
