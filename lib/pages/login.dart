@@ -1,3 +1,4 @@
+import 'package:canteen_app/admin/admin_login.dart';
 import 'package:canteen_app/pages/bottomnav.dart';
 import 'package:canteen_app/pages/forgotpassword.dart';
 import 'package:canteen_app/pages/signup.dart';
@@ -159,6 +160,23 @@ class _LogInState extends State<LogIn> {
                                   )),
                             ),
                             SizedBox(
+                              height: 5.0,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AdminLogin()));
+                              },
+                              child: Container(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    "Admin Login?",
+                                    style: AppWidget.semiBoldTextFeildStyle(),
+                                  )),
+                            ),
+                            SizedBox(
                               height: 80.0,
                             ),
                             GestureDetector(
@@ -184,7 +202,8 @@ class _LogInState extends State<LogIn> {
                                       child: Text(
                                     "LOGIN",
                                     style: TextStyle(
-                                        color: Colors.white,
+                                        color: const Color.fromARGB(
+                                            255, 255, 255, 255),
                                         fontSize: 18.0,
                                         fontFamily: 'Poppins1',
                                         fontWeight: FontWeight.bold),
