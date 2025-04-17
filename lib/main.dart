@@ -1,11 +1,7 @@
-import 'package:canteen_app/admin/admin_login.dart';
 import 'package:canteen_app/admin/home_admin.dart';
 import 'package:canteen_app/pages/bottomnav.dart';
-import 'package:canteen_app/pages/home.dart';
 import 'package:canteen_app/pages/login.dart';
 import 'package:canteen_app/pages/onboard.dart';
-import 'package:canteen_app/pages/order.dart';
-import 'package:canteen_app/pages/profile.dart';
 import 'package:canteen_app/widget/app_constant.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +18,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  // This widget is the root of your application.+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -48,6 +44,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: BottomNav()
+      home: LogIn(),
       initialRoute: '/login',
       routes: {
         '/login': (context) => LogIn(),
