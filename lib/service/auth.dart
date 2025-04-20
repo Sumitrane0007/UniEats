@@ -5,7 +5,7 @@ class AuthMethods {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   getCurrentUser() async {
-    return await auth.currentUser;
+    return auth.currentUser;
   }
 
   Future<void> SignOut(BuildContext context) async {
@@ -25,7 +25,7 @@ class AuthMethods {
   }
 
   Future deleteuser() async {
-    User? user = await FirebaseAuth.instance.currentUser;
+    User? user = FirebaseAuth.instance.currentUser;
     user?.delete();
   }
 }

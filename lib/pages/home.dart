@@ -39,6 +39,10 @@ class _HomeState extends State<Home> {
                   scrollDirection: Axis.vertical,
                   itemBuilder: (context, index) {
                     DocumentSnapshot ds = snapshot.data.docs[index];
+
+                    // Convert price to String
+                    String price = ds["Price"].toString();
+
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -47,7 +51,7 @@ class _HomeState extends State<Home> {
                                 builder: (context) => Details(
                                       detail: ds["Detail"],
                                       name: ds["Name"],
-                                      price: ds["Price"],
+                                      price: price, // Use converted price
                                       image: ds["Image"],
                                     )));
                       },
@@ -74,7 +78,7 @@ class _HomeState extends State<Home> {
                                     width: 20.0,
                                   ),
                                   Column(children: [
-                                    Container(
+                                    SizedBox(
                                       width:
                                           MediaQuery.of(context).size.width / 2,
                                       child: Text(
@@ -83,18 +87,14 @@ class _HomeState extends State<Home> {
                                             AppWidget.semiBoldTextFeildStyle(),
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
+                                    SizedBox(height: 5.0),
                                     Text(
                                       "Fresh and Healthy",
                                       style: AppWidget.LightTextFeildStyle(),
                                     ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
+                                    SizedBox(height: 5.0),
                                     Text(
-                                      "\$" + ds["Price"],
+                                      "\$$price", // Use converted price
                                       style: AppWidget.semiBoldTextFeildStyle(),
                                     )
                                   ]),
@@ -120,6 +120,10 @@ class _HomeState extends State<Home> {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
                     DocumentSnapshot ds = snapshot.data.docs[index];
+
+                    // Convert price to String
+                    String price = ds["Price"].toString();
+
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -128,7 +132,7 @@ class _HomeState extends State<Home> {
                                 builder: (context) => Details(
                                       detail: ds["Detail"],
                                       name: ds["Name"],
-                                      price: ds["Price"],
+                                      price: price, // Use converted price
                                       image: ds["Image"],
                                     )));
                       },
@@ -159,11 +163,9 @@ class _HomeState extends State<Home> {
                                   "Fresh and Healthy",
                                   style: AppWidget.LightTextFeildStyle(),
                                 ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
+                                SizedBox(height: 5.0),
                                 Text(
-                                  "\$" + ds["Price"],
+                                  "₹$price", // Use converted price
                                   style: AppWidget.semiBoldTextFeildStyle(),
                                 )
                               ],
@@ -220,7 +222,7 @@ class _HomeState extends State<Home> {
               SizedBox(
                 height: 30.0,
               ),
-              Container(height: 270, child: allItems()),
+              SizedBox(height: 270, child: allItems()),
               SizedBox(
                 height: 30.0,
               ),

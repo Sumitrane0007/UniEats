@@ -2,13 +2,12 @@ import 'package:canteen_app/service/database.dart';
 import 'package:canteen_app/service/shared_pref.dart';
 import 'package:canteen_app/widget/widget_support.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 class Details extends StatefulWidget {
   String image, name, detail, price;
   Details(
-      {required this.detail,
+      {super.key,
+      required this.detail,
       required this.image,
       required this.name,
       required this.price});
@@ -21,11 +20,13 @@ class _DetailsState extends State<Details> {
   int a = 1, total = 0;
   String? id;
 
+  // Get user id from SharedPreferences
   getthesharedpref() async {
     id = await SharedPreferenceHelper().getUserId();
     setState(() {});
   }
 
+  // Load user data when the widget loads
   ontheload() async {
     await getthesharedpref();
     setState(() {});
@@ -35,7 +36,39 @@ class _DetailsState extends State<Details> {
   void initState() {
     super.initState();
     ontheload();
-    total = int.parse(widget.price);
+
+    // Ensure price is valid and convert it to an integer
+    total = _parsePrice(widget.price);
+    print("Selected Item: ${widget.name}, Price: ${widget.price}");
+  }
+
+  // Utility function to parse the price and ensure it's an integer
+  int _parsePrice(String? price) {
+    if (price == null || price.isEmpty) return 0;
+    try {
+      return double.parse(price).toInt(); // Convert float to integer
+    } catch (e) {
+      print("Error parsing price: $e, value: $price");
+      return 0;
+    }
+  }
+
+  // Decrement quantity and update total price
+  void decrementQuantity() {
+    if (a > 1) {
+      setState(() {
+        a--;
+        total = _parsePrice(widget.price) * a; // Update total based on quantity
+      });
+    }
+  }
+
+  // Increment quantity and update total price
+  void incrementQuantity() {
+    setState(() {
+      a++;
+      total = _parsePrice(widget.price) * a; // Update total based on quantity
+    });
   }
 
   @override
@@ -76,13 +109,7 @@ class _DetailsState extends State<Details> {
                 ),
                 Spacer(),
                 GestureDetector(
-                  onTap: () {
-                    if (a > 1) {
-                      --a;
-                      total = total - int.parse(widget.price);
-                    }
-                    setState(() {});
-                  },
+                  onTap: decrementQuantity,
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.black,
@@ -104,11 +131,7 @@ class _DetailsState extends State<Details> {
                   width: 20.0,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    ++a;
-                    total = total + int.parse(widget.price);
-                    setState(() {});
-                  },
+                  onTap: incrementQuantity,
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.black,
@@ -168,7 +191,7 @@ class _DetailsState extends State<Details> {
                         style: AppWidget.semiBoldTextFeildStyle(),
                       ),
                       Text(
-                        "\$" + total.toString(),
+                        "₹$total",
                         style: AppWidget.HeadlineTextFeildStyle(),
                       )
                     ],

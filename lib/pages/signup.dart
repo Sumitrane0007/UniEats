@@ -5,10 +5,6 @@ import 'package:canteen_app/service/shared_pref.dart';
 import 'package:canteen_app/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-// import 'package:fooddeliveryapp/service/database.dart';
-// import 'package:fooddeliveryapp/service/shared_pref.dart';
-
 import 'package:random_string/random_string.dart';
 
 class SignUp extends StatefulWidget {
@@ -19,13 +15,13 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  String email = "", password = "", name = "";
+  String email = "", password = "", name = "", phone = "";
 
   TextEditingController namecontroller = TextEditingController();
-
   TextEditingController passwordcontroller = TextEditingController();
-
   TextEditingController mailcontroller = TextEditingController();
+  TextEditingController phonecontroller =
+      TextEditingController(); // New phone controller
 
   final _formkey = GlobalKey<FormState>();
 
@@ -35,23 +31,29 @@ class _SignUpState extends State<SignUp> {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Colors.green,
           content: Text(
             "Registered Successfully",
             style: TextStyle(fontSize: 20.0),
           ))));
+
       String Id = randomAlphaNumeric(10);
+
       Map<String, dynamic> addUserInfo = {
         "Name": namecontroller.text,
         "Email": mailcontroller.text,
+        "Phone": phonecontroller.text, // Save phone number in Firestore
         "Wallet": "0",
         "Id": Id,
       };
+
       await DatabaseMethods().addUserDetail(addUserInfo, Id);
       await SharedPreferenceHelper().saveUserName(namecontroller.text);
       await SharedPreferenceHelper().saveUserEmail(mailcontroller.text);
       await SharedPreferenceHelper().saveUserWallet('0');
       await SharedPreferenceHelper().saveUserId(Id);
+      await SharedPreferenceHelper()
+          .saveUserPhone(phonecontroller.text); // Save phone locally
 
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
@@ -68,7 +70,7 @@ class _SignUpState extends State<SignUp> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.orangeAccent,
             content: Text(
-              "Account Already exsists",
+              "Account Already Exists",
               style: TextStyle(fontSize: 18.0),
             )));
       }
@@ -111,7 +113,7 @@ class _SignUpState extends State<SignUp> {
                 children: [
                   Center(
                       child: Image.asset(
-                    "images/logo.png",
+                    "images/logo3.png",
                     width: MediaQuery.of(context).size.width / 1.5,
                     fit: BoxFit.cover,
                   )),
@@ -124,7 +126,7 @@ class _SignUpState extends State<SignUp> {
                     child: Container(
                       padding: EdgeInsets.only(left: 20.0, right: 20.0),
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 1.8,
+                      height: MediaQuery.of(context).size.height / 1.5,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20)),
@@ -132,16 +134,10 @@ class _SignUpState extends State<SignUp> {
                         key: _formkey,
                         child: Column(
                           children: [
-                            SizedBox(
-                              height: 30.0,
-                            ),
-                            Text(
-                              "Sign up",
-                              style: AppWidget.HeadlineTextFeildStyle(),
-                            ),
-                            SizedBox(
-                              height: 30.0,
-                            ),
+                            SizedBox(height: 30.0),
+                            Text("Sign up",
+                                style: AppWidget.HeadlineTextFeildStyle()),
+                            SizedBox(height: 30.0),
                             TextFormField(
                               controller: namecontroller,
                               validator: (value) {
@@ -155,9 +151,7 @@ class _SignUpState extends State<SignUp> {
                                   hintStyle: AppWidget.semiBoldTextFeildStyle(),
                                   prefixIcon: Icon(Icons.person_outlined)),
                             ),
-                            SizedBox(
-                              height: 30.0,
-                            ),
+                            SizedBox(height: 20.0),
                             TextFormField(
                               controller: mailcontroller,
                               validator: (value) {
@@ -171,9 +165,25 @@ class _SignUpState extends State<SignUp> {
                                   hintStyle: AppWidget.semiBoldTextFeildStyle(),
                                   prefixIcon: Icon(Icons.email_outlined)),
                             ),
-                            SizedBox(
-                              height: 30.0,
+                            SizedBox(height: 20.0),
+                            TextFormField(
+                              controller: phonecontroller, // New Phone field
+                              keyboardType: TextInputType.phone,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please Enter Phone Number';
+                                }
+                                if (value.length < 10) {
+                                  return 'Enter a valid phone number';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                  hintText: 'Phone',
+                                  hintStyle: AppWidget.semiBoldTextFeildStyle(),
+                                  prefixIcon: Icon(Icons.phone_outlined)),
                             ),
+                            SizedBox(height: 20.0),
                             TextFormField(
                               controller: passwordcontroller,
                               validator: (value) {
@@ -188,9 +198,7 @@ class _SignUpState extends State<SignUp> {
                                   hintStyle: AppWidget.semiBoldTextFeildStyle(),
                                   prefixIcon: Icon(Icons.password_outlined)),
                             ),
-                            SizedBox(
-                              height: 80.0,
-                            ),
+                            SizedBox(height: 50.0),
                             GestureDetector(
                               onTap: () async {
                                 if (_formkey.currentState!.validate()) {
@@ -198,9 +206,10 @@ class _SignUpState extends State<SignUp> {
                                     email = mailcontroller.text;
                                     name = namecontroller.text;
                                     password = passwordcontroller.text;
+                                    phone = phonecontroller.text;
                                   });
+                                  registration();
                                 }
-                                registration();
                               },
                               child: Material(
                                 elevation: 5.0,
@@ -228,18 +237,14 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 70.0,
-                  ),
+                  SizedBox(height: 20.0),
                   GestureDetector(
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => LogIn()));
                       },
-                      child: Text(
-                        "Already have an account? Login",
-                        style: AppWidget.semiBoldTextFeildStyle(),
-                      ))
+                      child: Text("Already have an account? Login",
+                          style: AppWidget.semiBoldTextFeildStyle()))
                 ],
               ),
             )

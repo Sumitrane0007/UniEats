@@ -11,8 +11,8 @@ class AdminLogin extends StatefulWidget {
 
 class _AdminLoginState extends State<AdminLogin> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  TextEditingController usernamecontroller = new TextEditingController();
-  TextEditingController userpasswordcontroller = new TextEditingController();
+  TextEditingController usernamecontroller = TextEditingController();
+  TextEditingController userpasswordcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +82,7 @@ class _AdminLoginState extends State<AdminLogin> {
                                       if (value == null || value.isEmpty) {
                                         return 'Please Enter Username';
                                       }
+                                      return null;
                                     },
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
@@ -111,6 +112,7 @@ class _AdminLoginState extends State<AdminLogin> {
                                       if (value == null || value.isEmpty) {
                                         return 'Please Enter Password';
                                       }
+                                      return null;
                                     },
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
@@ -162,7 +164,7 @@ class _AdminLoginState extends State<AdminLogin> {
 
   LoginAdmin() {
     FirebaseFirestore.instance.collection("Admin").get().then((snapshot) {
-      snapshot.docs.forEach((result) {
+      for (var result in snapshot.docs) {
         if (result.data()['id'] != usernamecontroller.text.trim()) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               backgroundColor: Colors.orangeAccent,
@@ -182,7 +184,7 @@ class _AdminLoginState extends State<AdminLogin> {
           Route route = MaterialPageRoute(builder: (context) => HomeAdmin());
           Navigator.pushReplacement(context, route);
         }
-      });
+      }
     });
   }
 }
