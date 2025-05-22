@@ -172,7 +172,7 @@ class _DetailsState extends State<Details> {
                   width: 5.0,
                 ),
                 Text(
-                  "30 min",
+                  "5 min",
                   style: AppWidget.semiBoldTextFeildStyle(),
                 )
               ],
